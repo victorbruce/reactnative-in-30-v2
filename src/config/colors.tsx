@@ -1,5 +1,8 @@
 export default {
-  black: '#111',
+  lightOrange: '#FEE9DD',
   white: '#fff',
-  lightGrey: '#777',
+  lightPurple: '#EDDDFE',
+  black: '#111',
+  grey: '#555',
+  lightGrey: '#F6F7FC',
 };
