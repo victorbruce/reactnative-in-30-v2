@@ -1,9 +1,9 @@
 import React from 'react';
 
-import LoginScreen from './screens/LoginScreen';
+import LessonScreen from './screens/LessonScreen';
 
 const App = (): JSX.Element => {
-  return <LoginScreen />;
+  return <LessonScreen />;
 };
 
 export default App;
