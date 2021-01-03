@@ -1,21 +1,13 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import {StyleSheet, View, Text, Image, FlatList} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
+import Course from '../components/Course';
 
 import colors from '../config/colors';
 import text from '../config/text';
-
-const {width} = Dimensions.get('screen');
 
 const courses = [
   {
@@ -70,6 +62,17 @@ const courses = [
 ];
 
 const LessonScreen = (): JSX.Element => {
+  const renderItem = ({item}: any) => {
+    return (
+      <Course
+        level={item.level}
+        lesson={item.lesson}
+        lessonColor={item.lessonColor}
+        completed={item.completed}
+      />
+    );
+  };
+
   return (
     <Screen style={styles.container}>
       <View style={styles.navContainer}>
@@ -84,30 +87,11 @@ const LessonScreen = (): JSX.Element => {
         <Text style={styles.coursePath}>Mobile Web Development</Text>
       </View>
       <Separator marginBottom={32} />
-      <ScrollView>
-        {courses.map((course, index) => (
-          <View style={styles.lessonContainer} key={index}>
-            <View
-              style={[
-                styles.lessonCard,
-                {backgroundColor: course.lessonColor},
-              ]}>
-              <View style={styles.lessonCardAbout}>
-                <Text style={styles.lessonLevel}>{course.level}</Text>
-                <Separator marginBottom={8} />
-                <Text numberOfLines={1} style={styles.lessonTitle}>
-                  {course.lesson}
-                </Text>
-              </View>
-              <View>
-                <Text style={styles.lessonCardStatus}>
-                  {course.completed ? 'Completed' : 'Take a lesson'}
-                </Text>
-              </View>
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={courses}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </Screen>
   );
 };
@@ -133,32 +117,6 @@ const styles = StyleSheet.create({
   coursePath: {
     fontSize: text.s,
     color: colors.grey,
-  },
-  lessonContainer: {
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  lessonCard: {
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: width - 64,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  lessonCardAbout: {
-    marginRight: 8,
-  },
-  lessonCardStatus: {
-    color: colors.grey,
-  },
-  lessonTitle: {
-    color: colors.grey,
-  },
-  lessonLevel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.black,
   },
 });
 
