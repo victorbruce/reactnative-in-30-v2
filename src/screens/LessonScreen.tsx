@@ -1,5 +1,12 @@
 import React from 'react';
-import {StyleSheet, View, Text, Image, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  FlatList,
+  RefreshControl,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Screen from '../components/Screen';
@@ -61,7 +68,23 @@ const courses = [
   },
 ];
 
+// fake asynchronous function
+
+const wait = (timeout: any) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, timeout);
+  });
+};
+
 const LessonScreen = (): JSX.Element => {
+  const [refreshing, setRefreshing] = React.useState<boolean>(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   const renderItem = ({item}: any) => {
     return (
       <Course
@@ -91,6 +114,9 @@ const LessonScreen = (): JSX.Element => {
         data={courses}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </Screen>
   );
