@@ -6,6 +6,9 @@ import {
   Image,
   FlatList,
   RefreshControl,
+  Modal,
+  TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -15,6 +18,8 @@ import Course from '../components/Course';
 
 import colors from '../config/colors';
 import text from '../config/text';
+
+const {width} = Dimensions.get('window');
 
 const courses = [
   {
@@ -78,6 +83,7 @@ const wait = (timeout: any) => {
 
 const LessonScreen = (): JSX.Element => {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
+  const [modalVisible, setModalVisible] = React.useState<boolean>(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -85,6 +91,7 @@ const LessonScreen = (): JSX.Element => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
+  // Render items in FlatList
   const renderItem = ({item}: any) => {
     return (
       <Course
@@ -96,12 +103,46 @@ const LessonScreen = (): JSX.Element => {
     );
   };
 
+  // Set Modal
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setModalVisible(false);
+  };
+
   return (
     <Screen style={styles.container}>
       <View style={styles.navContainer}>
         <MaterialCommunityIcons name="chevron-left" size={28} />
-        <MaterialCommunityIcons name="dots-vertical" size={28} />
+        <TouchableOpacity onPress={openModal}>
+          <MaterialCommunityIcons name="dots-vertical" size={28} />
+          <Modal animationType="fade" transparent={true} visible={modalVisible}>
+            <TouchableOpacity
+              style={styles.modalBackground}
+              onPress={hideModal}>
+              <Screen>
+                <View style={styles.modalView}>
+                  <View style={styles.modalTextWrapper}>
+                    <MaterialCommunityIcons name="face-profile" size={24} />
+                    <Text style={styles.modalText}>Profile</Text>
+                  </View>
+                  <View style={styles.modalTextWrapper}>
+                    <MaterialCommunityIcons name="power-settings" size={24} />
+                    <Text style={styles.modalText}>Settings</Text>
+                  </View>
+                  <View style={styles.modalTextWrapper}>
+                    <MaterialCommunityIcons name="logout" size={24} />
+                    <Text style={styles.modalText}>Logout</Text>
+                  </View>
+                </View>
+              </Screen>
+            </TouchableOpacity>
+          </Modal>
+        </TouchableOpacity>
       </View>
+
       <View style={styles.portfolioContainer}>
         <Image source={require('../assets/profile.png')} />
         <Separator marginBottom={24} />
@@ -109,7 +150,9 @@ const LessonScreen = (): JSX.Element => {
         <Separator marginBottom={8} />
         <Text style={styles.coursePath}>Mobile Web Development</Text>
       </View>
+
       <Separator marginBottom={32} />
+
       <FlatList
         data={courses}
         renderItem={renderItem}
@@ -143,6 +186,39 @@ const styles = StyleSheet.create({
   coursePath: {
     fontSize: text.s,
     color: colors.grey,
+  },
+  modalBackground: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+
+  modalView: {
+    width: width * 0.5,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 24,
+    // alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 8,
+    fontSize: 16,
+    marginLeft: 8,
+    lineHeight: 24,
+    paddingTop: 8,
+  },
+  modalTextWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
