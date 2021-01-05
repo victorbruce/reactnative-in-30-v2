@@ -6,7 +6,6 @@ import {
   Image,
   FlatList,
   RefreshControl,
-  Modal,
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
@@ -15,6 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
 import Course from '../components/Course';
+import AppModal from '../components/AppModal';
 
 import colors from '../config/colors';
 import text from '../config/text';
@@ -84,6 +84,7 @@ const wait = (timeout: any) => {
 const LessonScreen = (): JSX.Element => {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
+  const [courseModal, setCourseModal] = React.useState<boolean>(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -94,52 +95,80 @@ const LessonScreen = (): JSX.Element => {
   // Render items in FlatList
   const renderItem = ({item}: any) => {
     return (
-      <Course
-        level={item.level}
-        lesson={item.lesson}
-        lessonColor={item.lessonColor}
-        completed={item.completed}
-      />
+      <TouchableOpacity onPress={openCourse}>
+        <Course
+          level={item.level}
+          lesson={item.lesson}
+          lessonColor={item.lessonColor}
+          completed={item.completed}
+        />
+        <AppModal
+          visible={courseModal}
+          animationType="slide"
+          hideModal={closeCourse}>
+          <View
+            style={[styles.courseModal, {backgroundColor: item.lessonColor}]}>
+            <View>
+              <Text style={{fontSize: 28, marginBottom: 16}}>{item.level}</Text>
+            </View>
+            <View>
+              <Text style={{fontSize: 18, marginBottom: 16}}>
+                {item.lesson}
+              </Text>
+            </View>
+            <View>
+              <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+                {item.completed ? 'Completed' : 'Take a lesson'}
+              </Text>
+            </View>
+          </View>
+        </AppModal>
+      </TouchableOpacity>
     );
   };
 
   // Set Modal
-  const openModal = () => {
+  const openDropDown = () => {
     setModalVisible(true);
   };
 
-  const hideModal = () => {
+  const hideDropDown = () => {
     setModalVisible(false);
+  };
+
+  const openCourse = () => {
+    setCourseModal(true);
+  };
+
+  const closeCourse = () => {
+    setCourseModal(false);
   };
 
   return (
     <Screen style={styles.container}>
       <View style={styles.navContainer}>
         <MaterialCommunityIcons name="chevron-left" size={28} />
-        <TouchableOpacity onPress={openModal}>
+        <TouchableOpacity onPress={openDropDown}>
           <MaterialCommunityIcons name="dots-vertical" size={28} />
-          <Modal animationType="fade" transparent={true} visible={modalVisible}>
-            <TouchableOpacity
-              style={styles.modalBackground}
-              onPress={hideModal}>
-              <Screen>
-                <View style={styles.modalView}>
-                  <View style={styles.modalTextWrapper}>
-                    <MaterialCommunityIcons name="face-profile" size={24} />
-                    <Text style={styles.modalText}>Profile</Text>
-                  </View>
-                  <View style={styles.modalTextWrapper}>
-                    <MaterialCommunityIcons name="power-settings" size={24} />
-                    <Text style={styles.modalText}>Settings</Text>
-                  </View>
-                  <View style={styles.modalTextWrapper}>
-                    <MaterialCommunityIcons name="logout" size={24} />
-                    <Text style={styles.modalText}>Logout</Text>
-                  </View>
-                </View>
-              </Screen>
-            </TouchableOpacity>
-          </Modal>
+          <AppModal
+            visible={modalVisible}
+            hideModal={hideDropDown}
+            animationType="fade">
+            <View style={styles.dropDownMenu}>
+              <View style={styles.dropDownTextWrapper}>
+                <MaterialCommunityIcons name="face-profile" size={24} />
+                <Text style={styles.dropDownText}>Profile</Text>
+              </View>
+              <View style={styles.dropDownTextWrapper}>
+                <MaterialCommunityIcons name="power-settings" size={24} />
+                <Text style={styles.dropDownText}>Settings</Text>
+              </View>
+              <View style={styles.dropDownTextWrapper}>
+                <MaterialCommunityIcons name="logout" size={24} />
+                <Text style={styles.dropDownText}>Logout</Text>
+              </View>
+            </View>
+          </AppModal>
         </TouchableOpacity>
       </View>
 
@@ -187,13 +216,7 @@ const styles = StyleSheet.create({
     fontSize: text.s,
     color: colors.grey,
   },
-  modalBackground: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-
-  modalView: {
+  dropDownMenu: {
     width: width * 0.5,
     margin: 20,
     backgroundColor: 'white',
@@ -209,16 +232,32 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-  modalText: {
+  dropDownText: {
     marginBottom: 8,
     fontSize: 16,
     marginLeft: 8,
     lineHeight: 24,
     paddingTop: 8,
   },
-  modalTextWrapper: {
+  dropDownTextWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  courseModal: {
+    width: width * 0.9,
+    margin: 20,
+    // backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 24,
+    // alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
