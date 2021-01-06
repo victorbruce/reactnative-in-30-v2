@@ -81,10 +81,11 @@ const wait = (timeout: any) => {
   });
 };
 
-const LessonScreen = (): JSX.Element => {
+const LessonScreen = ({navigation}: any): JSX.Element => {
   const [refreshing, setRefreshing] = React.useState<boolean>(false);
   const [modalVisible, setModalVisible] = React.useState<boolean>(false);
   const [courseModal, setCourseModal] = React.useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = React.useState<any>('');
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -95,34 +96,13 @@ const LessonScreen = (): JSX.Element => {
   // Render items in FlatList
   const renderItem = ({item}: any) => {
     return (
-      <TouchableOpacity onPress={openCourse}>
+      <TouchableOpacity onPress={() => openCourse(item)}>
         <Course
           level={item.level}
           lesson={item.lesson}
           lessonColor={item.lessonColor}
           completed={item.completed}
         />
-        <AppModal
-          visible={courseModal}
-          animationType="slide"
-          hideModal={closeCourse}>
-          <View
-            style={[styles.courseModal, {backgroundColor: item.lessonColor}]}>
-            <View>
-              <Text style={{fontSize: 28, marginBottom: 16}}>{item.level}</Text>
-            </View>
-            <View>
-              <Text style={{fontSize: 18, marginBottom: 16}}>
-                {item.lesson}
-              </Text>
-            </View>
-            <View>
-              <Text style={{fontSize: 16, fontWeight: 'bold'}}>
-                {item.completed ? 'Completed' : 'Take a lesson'}
-              </Text>
-            </View>
-          </View>
-        </AppModal>
       </TouchableOpacity>
     );
   };
@@ -136,7 +116,8 @@ const LessonScreen = (): JSX.Element => {
     setModalVisible(false);
   };
 
-  const openCourse = () => {
+  const openCourse = (item: any) => {
+    setSelectedItem(item);
     setCourseModal(true);
   };
 
@@ -147,7 +128,12 @@ const LessonScreen = (): JSX.Element => {
   return (
     <Screen style={styles.container}>
       <View style={styles.navContainer}>
-        <MaterialCommunityIcons name="chevron-left" size={28} />
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          {/* <MaterialCommunityIcons name="chevron-left" size={28} /> */}
+          <View>
+            <Text>Home</Text>
+          </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={openDropDown}>
           <MaterialCommunityIcons name="dots-vertical" size={28} />
           <AppModal
@@ -190,6 +176,33 @@ const LessonScreen = (): JSX.Element => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+
+      <AppModal
+        visible={courseModal}
+        animationType="slide"
+        hideModal={closeCourse}>
+        <View
+          style={[
+            styles.courseModal,
+            {backgroundColor: selectedItem.lessonColor},
+          ]}>
+          <View>
+            <Text style={{fontSize: 28, marginBottom: 16}}>
+              {selectedItem.level}
+            </Text>
+          </View>
+          <View>
+            <Text style={{fontSize: 18, marginBottom: 16}}>
+              {selectedItem.lesson}
+            </Text>
+          </View>
+          <View>
+            <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+              {selectedItem.completed ? 'Completed' : 'Take a lesson'}
+            </Text>
+          </View>
+        </View>
+      </AppModal>
     </Screen>
   );
 };
