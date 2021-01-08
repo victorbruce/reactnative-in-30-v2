@@ -1,14 +1,24 @@
-import 'react-native-gesture-handler';
-import React from 'react';
+import * as React from 'react';
+import {View, Text, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import LessonScreen from './screens/LessonScreen';
 import HomeScreen from './screens/HomeScreen';
 
+// function DetailsScreen() {
+//   return (
+//     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+//       <Text>Details Screen</Text>
+//     </View>
+//   );
+// }
+
+
+
 const Stack = createStackNavigator();
 
-const App = (): JSX.Element => {
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -17,6 +27,6 @@ const App = (): JSX.Element => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+}
 
 export default App;

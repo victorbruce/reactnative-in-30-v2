@@ -8,6 +8,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Dimensions,
+  Button,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -94,7 +95,7 @@ const LessonScreen = ({navigation}: any): JSX.Element => {
   }, []);
 
   // Render items in FlatList
-  const renderItem = ({item}: any) => {
+  const renderItem = ({item}) => {
     return (
       <TouchableOpacity onPress={() => openCourse(item)}>
         <Course
@@ -129,10 +130,7 @@ const LessonScreen = ({navigation}: any): JSX.Element => {
     <Screen style={styles.container}>
       <View style={styles.navContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-          {/* <MaterialCommunityIcons name="chevron-left" size={28} /> */}
-          <View>
-            <Text>Home</Text>
-          </View>
+          <MaterialCommunityIcons name="chevron-left" size={28} />
         </TouchableOpacity>
         <TouchableOpacity onPress={openDropDown}>
           <MaterialCommunityIcons name="dots-vertical" size={28} />
