@@ -208,6 +208,7 @@ const LessonScreen = ({navigation}: any): JSX.Element => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   navContainer: {
     flexDirection: 'row',
