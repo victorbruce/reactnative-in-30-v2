@@ -1,16 +1,24 @@
 import React from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
-function HomeScreen({navigation}) {
+function HomeScreen() {
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Home Screen</Text>
-      <Button
-        title="Go to Lessons"
-        onPress={() => navigation.navigate('Lesson')}
-      />
+    <View style={styles.container}>
+      <Text style={styles.title}>todo</Text>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+});
 
 export default HomeScreen;
