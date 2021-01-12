@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import HomeScreen from './screens/HomeScreen';
+import WelcomeScreen from './screens/WelcomeScreen';
 
 function App() {
-  return <HomeScreen />;
+  return <WelcomeScreen />;
 }
 
 export default App;
