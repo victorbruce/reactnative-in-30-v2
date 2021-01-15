@@ -7,18 +7,22 @@ import {
   Text,
 } from 'react-native';
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({navigation}) => {
   return (
     <ImageBackground
       source={require('../assets/welcome-bg.png')}
       style={styles.background}>
       <View style={styles.btnGroup}>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigation.navigate('Signin')}>
           <View>
             <Text style={styles.btnText}>Sign in</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btnOutline}>
+        <TouchableOpacity
+          style={styles.btnOutline}
+          onPress={() => navigation.navigate('Signup')}>
           <View>
             <Text style={styles.btnOutlineText}>Sign up</Text>
           </View>
