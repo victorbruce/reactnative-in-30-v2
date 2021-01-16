@@ -1,62 +1,54 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import {Formik} from 'formik';
-import * as Yup from 'yup';
+import {StyleSheet, TextInput, View, TouchableOpacity} from 'react-native';
 
+import AppButton from '../components/AppButton';
+import AppText from '../components/AppText';
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
+import theme from '../config/theme';
 
-const validationSchema = Yup.object().shape({
-  email: Yup.string().required().email().label('Email'),
-  passowrd: Yup.string().required().min(4).label('Password'),
-});
-
-const SignupScreen = () => {
+const SignupScreen = ({navigation}) => {
   return (
     <Screen style={styles.container}>
-      <View style={styles.screenWrapper}>
-        <Text style={styles.title}>SignUp</Text>
-        <Formik
-          initialValues={{email: '', password: ''}}
-          onSubmit={(values) => console.log(values)}
-          validationSchema={validationSchema}>
-          {({handleSubmit, handleChange, errors}) => (
+      <AppText style={styles.title}>Sign up</AppText>
+      <View style={styles.signupForm}>
+        <TextInput
+          autoCapitalize="none"
+          style={styles.textInput}
+          placeholder="email"
+          placeholderTextColor={theme.colors.white}
+          keyboardType="email-address"
+          autoCorrect={false}
+        />
+        <TextInput
+          autoCapitalize="none"
+          style={styles.textInput}
+          placeholder="username"
+          placeholderTextColor={theme.colors.white}
+          autoCorrect={false}
+        />
+        <TextInput
+          autoCapitalize="none"
+          autoCorrect={false}
+          placeholder="password"
+          placeholderTextColor={theme.colors.white}
+          style={styles.textInput}
+          secureTextEntry
+        />
+        <Separator marginBottom={theme.spacing.medium} />
+        <AppButton
+          title="Sign up"
+          btnTextColor={theme.colors.black}
+          onPress={() => console.log('Logining')}
+        />
+        <View style={styles.signinOption}>
+          <AppText>Already have an account?</AppText>
+          <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
             <View>
-              <TextInput
-                autoCapitalize="none"
-                onChangeText={handleChange('email')}
-                placeholder="Enter your email address"
-                placeholderTextColor="#777"
-                style={styles.inputField}
-                keyboardType="email-address"
-              />
-              <Separator marginBottom={8} />
-              <Text style={{color: 'red'}}>{errors.email}</Text>
-              <Separator marginBottom={16} />
-              <TextInput
-                onChangeText={handleChange('password')}
-                placeholder="Enter your password"
-                placeholderTextColor="#777"
-                style={styles.inputField}
-                secureTextEntry={true}
-              />
-              <Separator marginBottom={8} />
-              <Text style={{color: 'red'}}>{errors.password}</Text>
-              <Separator marginBottom={16} />
-              <TouchableOpacity style={styles.signupBtn} onPress={handleSubmit}>
-                <View>
-                  <Text style={styles.btnLabel}>Sign up</Text>
-                </View>
-              </TouchableOpacity>
+              <AppText style={styles.signin}>Login</AppText>
             </View>
-          )}
-        </Formik>
+          </TouchableOpacity>
+        </View>
       </View>
     </Screen>
   );
@@ -65,38 +57,34 @@ const SignupScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  screenWrapper: {
-    flex: 1,
-    paddingHorizontal: 24,
+    backgroundColor: theme.colors.black,
     justifyContent: 'center',
-    marginBottom: 38,
   },
   title: {
-    fontSize: 24,
+    alignSelf: 'center',
+    fontSize: theme.textVariants.large,
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 24,
   },
-  btnLabel: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '500',
+  signupForm: {
+    padding: theme.spacing.large,
   },
-  inputField: {
+  textInput: {
     borderWidth: 1,
-    borderRadius: 15,
-    height: 50,
-    borderColor: '#ccc',
-    paddingLeft: 16,
+    borderColor: theme.colors.white,
+    padding: theme.spacing.medium,
+    borderRadius: theme.borderRadii.medium,
+    color: theme.colors.white,
+    marginBottom: theme.spacing.medium,
   },
-  signupBtn: {
-    height: 50,
-    backgroundColor: '#111',
-    borderRadius: 15,
-    justifyContent: 'center',
+  signin: {
+    fontWeight: 'bold',
+    marginLeft: theme.spacing.small,
+  },
+  signinOption: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: theme.spacing.medium,
   },
 });
 
