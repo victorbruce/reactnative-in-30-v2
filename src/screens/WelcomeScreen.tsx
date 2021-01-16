@@ -1,11 +1,10 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  ImageBackground,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import {StyleSheet, View, ImageBackground} from 'react-native';
+
+import AppButton from '../components/AppButton';
+import Separator from '../components/Separator';
+
+import theme from '../config/theme';
 
 const WelcomeScreen = ({navigation}) => {
   return (
@@ -13,20 +12,17 @@ const WelcomeScreen = ({navigation}) => {
       source={require('../assets/welcome-bg.png')}
       style={styles.background}>
       <View style={styles.btnGroup}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => navigation.navigate('Signin')}>
-          <View>
-            <Text style={styles.btnText}>Sign in</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btnOutline}
-          onPress={() => navigation.navigate('Signup')}>
-          <View>
-            <Text style={styles.btnOutlineText}>Sign up</Text>
-          </View>
-        </TouchableOpacity>
+        <AppButton
+          title="Sign in"
+          onPress={() => navigation.navigate('Signin')}
+          btnTextColor={theme.colors.black}
+        />
+        <Separator marginBottom={theme.spacing.medium} />
+        <AppButton
+          title="Sign up"
+          onPress={() => navigation.navigate('Signup')}
+          outline={true}
+        />
       </View>
     </ImageBackground>
   );
@@ -41,30 +37,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     marginBottom: 50,
-  },
-  btn: {
-    padding: 16,
-    backgroundColor: '#FFC100',
     marginHorizontal: 24,
-    marginVertical: 16,
-  },
-  btnText: {
-    fontSize: 16,
-    color: '#111',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  btnOutline: {
-    borderWidth: 1,
-    borderColor: '#ffc100',
-    padding: 16,
-    marginHorizontal: 24,
-  },
-  btnOutlineText: {
-    color: '#ffc100',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
