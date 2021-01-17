@@ -1,12 +1,21 @@
 import React from 'react';
-import {View, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import * as Yup from 'yup';
 
 import AppButton from '../components/AppButton';
+import AppForm from '../components/AppForm';
 import AppText from '../components/AppText';
+import AppFormField from '../components/AppFormField';
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
+import SubmitButton from '../components/SubmitButton';
 
 import theme from '../config/theme';
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email().required().label('Email'),
+  password: Yup.string().required().min(6).label('Password'),
+});
 
 const SigninScreen = ({navigation}) => {
   return (
@@ -19,26 +28,28 @@ const SigninScreen = ({navigation}) => {
           onPress={() => console.log('connect with google')}
         />
         <AppText style={styles.textOption}>OR</AppText>
-        <TextInput
-          autoCapitalize="none"
-          style={styles.textInput}
-          placeholder="email"
-          placeholderTextColor={theme.colors.white}
-          keyboardType="email-address"
-          autoCorrect={false}
-        />
-        <TextInput
-          placeholder="password"
-          placeholderTextColor={theme.colors.white}
-          secureTextEntry
-          style={styles.textInput}
-        />
-        <Separator marginBottom={theme.spacing.medium} />
-        <AppButton
-          title="Login"
-          btnTextColor={theme.colors.black}
-          onPress={() => console.log('Logining')}
-        />
+        <AppForm
+          initialValues={{email: '', password: ''}}
+          onSubmit={(values: any) => console.log(values)}
+          validationSchema={validationSchema}>
+          <AppFormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            placeholder="email"
+            name="email"
+          />
+
+          <AppFormField
+            autoCapitalize="none"
+            placeholder="password"
+            name="password"
+            secureTextEntry
+          />
+
+          <Separator marginBottom={theme.spacing.medium} />
+          <SubmitButton title="Login" />
+        </AppForm>
         <View style={styles.signupOption}>
           <AppText>Don't have an account?</AppText>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
@@ -67,14 +78,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     marginVertical: theme.spacing.medium,
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: theme.colors.white,
-    padding: theme.spacing.medium,
-    borderRadius: theme.borderRadii.medium,
-    color: theme.colors.white,
-    marginBottom: theme.spacing.medium,
   },
   loginForm: {
     padding: theme.spacing.large,
