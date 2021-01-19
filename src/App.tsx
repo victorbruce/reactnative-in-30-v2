@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import WelcomeScreen from './screens/WelcomeScreen';
 import SigninScreen from './screens/SigninScreen';
 import SignupScreen from './screens/SignupScreen';
+import HomeScreen from './screens/HomeScreen';
 
 const AuthStack = createStackNavigator();
 
@@ -25,6 +26,14 @@ const AuthNavigator = () => {
         name="Signup"
         component={SignupScreen}
         options={{headerShown: false}}
+      />
+      <AuthStack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerStyle: {backgroundColor: '#000'},
+          headerTintColor: '#fff',
+        }}
       />
     </AuthStack.Navigator>
   );

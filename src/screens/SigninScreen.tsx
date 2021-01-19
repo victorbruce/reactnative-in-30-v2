@@ -30,7 +30,10 @@ const SigninScreen = ({navigation}) => {
         <AppText style={styles.textOption}>OR</AppText>
         <AppForm
           initialValues={{email: '', password: ''}}
-          onSubmit={(values: any) => console.log(values)}
+          onSubmit={(values: any) => {
+            navigation.navigate('Home');
+            console.log(values);
+          }}
           validationSchema={validationSchema}>
           <AppFormField
             autoCapitalize="none"
