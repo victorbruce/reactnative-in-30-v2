@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "670583968577",
+    "project_id": "todo-99bb7",
+    "storage_bucket": "todo-99bb7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670583968577:android:7df8c27fb636f5f5a087c0",
+        "android_client_info": {
+          "package_name": "com.rninthirtydays"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "670583968577-cs448lr9f1e1qto92gvr7lhig5peb0hf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIAVPLYa4nf09FoIIAPu6ruCYpSZc4Kik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670583968577-cs448lr9f1e1qto92gvr7lhig5peb0hf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
