@@ -2,15 +2,15 @@ import React from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import * as Yup from 'yup';
 
-import AppButton from '../components/AppButton';
-import AppForm from '../components/AppForm';
-import AppText from '../components/AppText';
-import AppFormField from '../components/AppFormField';
-import Screen from '../components/Screen';
-import Separator from '../components/Separator';
-import SubmitButton from '../components/SubmitButton';
+import AppButton from '../../components/AppButton';
+import AppForm from '../../components/AppForm';
+import AppText from '../../components/AppText';
+import AppFormField from '../../components/AppFormField';
+import Screen from '../../components/Screen';
+import Separator from '../../components/Separator';
+import SubmitButton from '../../components/SubmitButton';
 
-import theme from '../config/theme';
+import theme from '../../config/theme';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string().email().required().label('Email'),

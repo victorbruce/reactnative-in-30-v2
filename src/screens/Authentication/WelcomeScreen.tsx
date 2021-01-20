@@ -1,15 +1,15 @@
 import React from 'react';
 import {StyleSheet, View, ImageBackground} from 'react-native';
 
-import AppButton from '../components/AppButton';
-import Separator from '../components/Separator';
+import AppButton from '../../components/AppButton';
+import Separator from '../../components/Separator';
 
-import theme from '../config/theme';
+import theme from '../../config/theme';
 
 const WelcomeScreen = ({navigation}) => {
   return (
     <ImageBackground
-      source={require('../assets/welcome-bg.png')}
+      source={require('../../assets/welcome-bg.png')}
       style={styles.background}>
       <View style={styles.btnGroup}>
         <AppButton

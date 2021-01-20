@@ -1,11 +1,11 @@
 import React from 'react';
 import {StyleSheet, TextInput, View, TouchableOpacity} from 'react-native';
 
-import AppButton from '../components/AppButton';
-import AppText from '../components/AppText';
-import Screen from '../components/Screen';
-import Separator from '../components/Separator';
-import theme from '../config/theme';
+import AppButton from '../../components/AppButton';
+import AppText from '../../components/AppText';
+import Screen from '../../components/Screen';
+import Separator from '../../components/Separator';
+import theme from '../../config/theme';
 
 const SignupScreen = ({navigation}) => {
   return (
