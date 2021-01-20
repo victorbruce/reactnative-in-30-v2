@@ -4,9 +4,13 @@ import {StyleSheet, View, ImageBackground} from 'react-native';
 import AppButton from '../../components/AppButton';
 import Separator from '../../components/Separator';
 
+import {AuthRoutes} from '../../navigation/Routes';
+import {StackNavigatorProps} from '../../navigation/NavInterfaces';
 import theme from '../../config/theme';
 
-const WelcomeScreen = ({navigation}) => {
+const WelcomeScreen = ({
+  navigation,
+}: StackNavigatorProps<AuthRoutes, 'Welcome'>) => {
   return (
     <ImageBackground
       source={require('../../assets/welcome-bg.png')}

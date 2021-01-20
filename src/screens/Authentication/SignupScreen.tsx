@@ -7,7 +7,12 @@ import Screen from '../../components/Screen';
 import Separator from '../../components/Separator';
 import theme from '../../config/theme';
 
-const SignupScreen = ({navigation}) => {
+import {AuthRoutes} from '../../navigation/Routes';
+import {StackNavigatorProps} from '../../navigation/NavInterfaces';
+
+const SignupScreen = ({
+  navigation,
+}: StackNavigatorProps<AuthRoutes, 'Signup'>) => {
   return (
     <Screen style={styles.container}>
       <AppText style={styles.title}>Sign up</AppText>
