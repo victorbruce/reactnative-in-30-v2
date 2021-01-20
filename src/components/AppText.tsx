@@ -5,10 +5,15 @@ import theme from '../config/theme';
 interface AppTextProps {
   children: React.ReactNode;
   style?: any;
+  numberOfLines?: number;
 }
 
-const AppText = ({children, style}: AppTextProps) => {
-  return <Text style={[styles.text, {...style}]}>{children}</Text>;
+const AppText = ({children, style, numberOfLines}: AppTextProps) => {
+  return (
+    <Text style={[styles.text, {...style}]} numberOfLines={numberOfLines}>
+      {children}
+    </Text>
+  );
 };
 
 const styles = StyleSheet.create({
