@@ -1,47 +1,15 @@
-import * as React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, {useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 
-import WelcomeScreen from './screens/WelcomeScreen';
-import SigninScreen from './screens/SigninScreen';
-import SignupScreen from './screens/SignupScreen';
-import HomeScreen from './screens/HomeScreen';
+import AuthNavigator from './navigation/AuthStack';
+import AppNavigator from './navigation/AppStack';
 
-const AuthStack = createStackNavigator();
-
-const AuthNavigator = () => {
-  return (
-    <AuthStack.Navigator>
-      <AuthStack.Screen
-        name="Welcome"
-        component={WelcomeScreen}
-        options={{headerShown: false}}
-      />
-      <AuthStack.Screen
-        name="Signin"
-        component={SigninScreen}
-        options={{headerShown: false}}
-      />
-      <AuthStack.Screen
-        name="Signup"
-        component={SignupScreen}
-        options={{headerShown: false}}
-      />
-      <AuthStack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerStyle: {backgroundColor: '#000'},
-          headerTintColor: '#fff',
-        }}
-      />
-    </AuthStack.Navigator>
-  );
-};
 function App() {
+  const [user, setUser] = useState<boolean>(true);
+
   return (
     <NavigationContainer>
-      <AuthNavigator />
+      {user ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }
