@@ -1,5 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
+import {AuthRoutes} from './Routes';
 
 import {
   WelcomeScreen,
@@ -7,7 +8,7 @@ import {
   SignupScreen,
 } from '../screens/Authentication';
 
-const AuthStack = createStackNavigator();
+const AuthStack = createStackNavigator<AuthRoutes>();
 
 const AuthNavigator = () => {
   return (
