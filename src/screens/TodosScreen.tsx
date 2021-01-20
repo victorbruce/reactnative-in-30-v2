@@ -3,13 +3,12 @@ import {StyleSheet} from 'react-native';
 
 import Screen from '../components/Screen';
 import AppText from '../components/AppText';
-
 import theme from '../config/theme';
 
-const SettingsScreen = () => {
+const TodosScreen = () => {
   return (
     <Screen style={styles.container}>
-      <AppText>Settings Screen</AppText>
+      <AppText>Todos Screen</AppText>
     </Screen>
   );
 };
@@ -23,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen;
+export default TodosScreen;

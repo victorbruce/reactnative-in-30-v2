@@ -6,10 +6,10 @@ import AppText from '../components/AppText';
 
 import theme from '../config/theme';
 
-const SettingsScreen = () => {
+const AddTodo = () => {
   return (
     <Screen style={styles.container}>
-      <AppText>Settings Screen</AppText>
+      <AppText>Add Todo</AppText>
     </Screen>
   );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SettingsScreen;
+export default AddTodo;
