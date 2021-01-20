@@ -10,21 +10,13 @@ A 30 days challenge to delve deep into React Native using React Native CLI and t
 - [Setup](#setup)
 - [Status](#status)
 
-## About Day 1
+## About Day 2
 
-I read about the basic components(View, Text, Image, TextInput, ScrollView, and StyleSheet) in React Native from their official documentation and how these components are used to create views for screens on both iOS and Android devices.
-
-I later designed a UI of a mobile login screen in figma and implemented the design in code using React Native.
+Day 2 was fun and I learned a lot. I am hoping to refactor the day 2 code to use the more performant ListView component, FlatList.
 
 ## Screenshots
 
-**Figma design**
-
-![Figma Design](./screenshots/day1-ui.png)
-
-**Final implementation using React Native**
-
-![Login Screen](./screenshots/day1.png)
+![Login Screen](./screenshots/day2.png)
 
 ## Technologies
 
