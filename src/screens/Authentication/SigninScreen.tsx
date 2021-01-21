@@ -10,6 +10,8 @@ import Screen from '../../components/Screen';
 import Separator from '../../components/Separator';
 import SubmitButton from '../../components/SubmitButton';
 
+import {AuthRoutes} from '../../navigation/Routes';
+import {StackNavigatorProps} from '../../navigation/NavInterfaces';
 import theme from '../../config/theme';
 
 const validationSchema = Yup.object().shape({
@@ -17,7 +19,9 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required().min(6).label('Password'),
 });
 
-const SigninScreen = ({navigation}) => {
+const SigninScreen = ({
+  navigation,
+}: StackNavigatorProps<AuthRoutes, 'Signin'>) => {
   return (
     <Screen style={styles.container}>
       <AppText style={styles.title}>Sign in</AppText>
@@ -31,7 +35,7 @@ const SigninScreen = ({navigation}) => {
         <AppForm
           initialValues={{email: '', password: ''}}
           onSubmit={(values: any) => {
-            navigation.navigate('Home');
+            // navigation.navigate('Home');
             console.log(values);
           }}
           validationSchema={validationSchema}>
