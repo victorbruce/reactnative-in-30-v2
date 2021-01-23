@@ -44,18 +44,4 @@ const AppNavigator = () => {
   );
 };
 
-{
-  /* <TabBottom.Navigator>
-      <TabBottom.Navigator tabBarOptions={{showLabel: false}}>
-        <TabBottom.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            tabBarIcon: () => <Ionicons name="home-outline" size={24} />,
-          }}
-        />
-      </TabBottom.Navigator>
-    </TabBottom.Navigator> */
-}
-
 export default AppNavigator;
