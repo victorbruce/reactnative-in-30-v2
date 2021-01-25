@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import * as Yup from 'yup';
 
 import AppText from '../../components/AppText';
@@ -29,9 +30,19 @@ const SignupScreen = ({
   const handleEmailAndPasswordSignIn = async (
     email: string,
     password: string,
+    username: string,
   ) => {
     try {
-      await auth().createUserWithEmailAndPassword(email, password);
+      const cred = await auth().createUserWithEmailAndPassword(email, password);
+      if (cred) {
+        console.log(cred.user);
+        await firestore().collection('users').doc(cred.user.uid).set({
+          firstName: username,
+          email: cred.user.email,
+          createdAt: firestore.FieldValue.serverTimestamp(),
+          lastLoginTime: firestore.FieldValue.serverTimestamp(),
+        });
+      }
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         return {error: 'That email address is already in use!'};
@@ -40,6 +51,8 @@ const SignupScreen = ({
       if (error.code === 'auth/invalid-email') {
         return {error: 'That email address is invalid!'};
       }
+
+      return error;
     }
   };
   return (
@@ -55,7 +68,11 @@ const SignupScreen = ({
           }}
           validationSchema={validationSchema}
           onSubmit={async (values: any) => {
-            await handleEmailAndPasswordSignIn(values.email, values.password);
+            handleEmailAndPasswordSignIn(
+              values.email,
+              values.password,
+              values.username,
+            );
           }}>
           <AppFormField
             autoCapitalize="none"
