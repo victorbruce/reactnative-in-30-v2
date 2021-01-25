@@ -1,6 +1,8 @@
-import React, {useState} from 'react';
-import {View, Image, StyleSheet, Switch, Text} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Image, StyleSheet, Switch, ActivityIndicator} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 import AppText from '../components/AppText';
 import Screen from '../components/Screen';
@@ -9,6 +11,7 @@ import Separator from '../components/Separator';
 import theme from '../config/theme';
 
 function HomeScreen() {
+  const [user, setUser] = useState<any>();
   const [todos, setTodos] = useState([
     {id: 1, todo: 'Build todo home screen'},
     {id: 2, todo: 'Refactor code'},
@@ -16,10 +19,42 @@ function HomeScreen() {
     {id: 4, todo: 'Post day 19 on my social media'},
   ]);
 
+  const getUser = async () => {
+    try {
+      const user = await firestore()
+        .collection('users')
+        .doc(auth().currentUser?.uid)
+        .get();
+
+      if (user.exists) {
+        setUser(user.data());
+      } else {
+        console.log('user not found');
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  if (!user) {
+    return (
+      <ActivityIndicator
+        animating={true}
+        size={24}
+        color="black"
+        style={styles.loadingIndicator}
+      />
+    );
+  }
+
   return (
     <Screen style={styles.container}>
       <View style={styles.header}>
-        <AppText style={styles.welcomeMsg}>Hi!, John Doe!</AppText>
+        <AppText style={styles.welcomeMsg}>Hi!, {user.username}</AppText>
         <AppText style={styles.taskStatus}>
           You have {todos.length} tasks available
         </AppText>
@@ -98,6 +133,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: theme.spacing.medium,
   },
+  loadingIndicator: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });
 
 export default HomeScreen;
