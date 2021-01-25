@@ -1,4 +1,5 @@
 import React from 'react';
+import auth from '@react-native-firebase/auth';
 import {StyleSheet, View, Image} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -10,6 +11,13 @@ import Separator from '../components/Separator';
 import theme from '../config/theme';
 
 const SettingsScreen = () => {
+  const handleSignOut = async () => {
+    try {
+      await auth().signOut();
+    } catch (error) {
+      return error;
+    }
+  };
   return (
     <Screen style={styles.container}>
       <View style={styles.titleBar}>
@@ -43,7 +51,7 @@ const SettingsScreen = () => {
         <AppButton
           title="Sign out"
           btnTextColor={theme.colors.black}
-          onPress={() => console.log('hello')}
+          onPress={handleSignOut}
         />
       </View>
     </Screen>

@@ -1,4 +1,5 @@
 import React from 'react';
+import auth from '@react-native-firebase/auth';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import * as Yup from 'yup';
 
@@ -22,6 +23,19 @@ const validationSchema = Yup.object().shape({
 const SigninScreen = ({
   navigation,
 }: StackNavigatorProps<AuthRoutes, 'Signin'>) => {
+  const handleSignIn = async (email: string, password: string) => {
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        return {error: 'That email address is already in use!'};
+      }
+
+      if (error.code === 'auth/invalid-email') {
+        return {error: 'That email address is invalid!'};
+      }
+    }
+  };
   return (
     <Screen style={styles.container}>
       <AppText style={styles.title}>Sign in</AppText>
@@ -34,9 +48,9 @@ const SigninScreen = ({
         <AppText style={styles.textOption}>OR</AppText>
         <AppForm
           initialValues={{email: '', password: ''}}
-          onSubmit={(values: any) => {
-            // navigation.navigate('Home');
+          onSubmit={async (values: any) => {
             console.log(values);
+            await handleSignIn(values.email, values.password);
           }}
           validationSchema={validationSchema}>
           <AppFormField

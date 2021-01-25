@@ -1,51 +1,86 @@
 import React from 'react';
-import {StyleSheet, TextInput, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import auth from '@react-native-firebase/auth';
+import * as Yup from 'yup';
 
-import AppButton from '../../components/AppButton';
 import AppText from '../../components/AppText';
+import AppForm from '../../components/AppForm';
+import AppFormField from '../../components/AppFormField';
 import Screen from '../../components/Screen';
-import Separator from '../../components/Separator';
+import SubmitButton from '../../components/SubmitButton';
 import theme from '../../config/theme';
 
 import {AuthRoutes} from '../../navigation/Routes';
 import {StackNavigatorProps} from '../../navigation/NavInterfaces';
 
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email().required().label('Email'),
+  username: Yup.string().required().min(4).label('Username'),
+  password: Yup.string().required().min(8).label('Password'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required()
+    .label('Confirm Password'),
+});
+
 const SignupScreen = ({
   navigation,
 }: StackNavigatorProps<AuthRoutes, 'Signup'>) => {
+  const handleEmailAndPasswordSignIn = async (
+    email: string,
+    password: string,
+  ) => {
+    try {
+      await auth().createUserWithEmailAndPassword(email, password);
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
+        return {error: 'That email address is already in use!'};
+      }
+
+      if (error.code === 'auth/invalid-email') {
+        return {error: 'That email address is invalid!'};
+      }
+    }
+  };
   return (
     <Screen style={styles.container}>
       <AppText style={styles.title}>Sign up</AppText>
       <View style={styles.signupForm}>
-        <TextInput
-          autoCapitalize="none"
-          style={styles.textInput}
-          placeholder="email"
-          placeholderTextColor={theme.colors.white}
-          keyboardType="email-address"
-          autoCorrect={false}
-        />
-        <TextInput
-          autoCapitalize="none"
-          style={styles.textInput}
-          placeholder="username"
-          placeholderTextColor={theme.colors.white}
-          autoCorrect={false}
-        />
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          placeholder="password"
-          placeholderTextColor={theme.colors.white}
-          style={styles.textInput}
-          secureTextEntry
-        />
-        <Separator marginBottom={theme.spacing.medium} />
-        <AppButton
-          title="Sign up"
-          btnTextColor={theme.colors.black}
-          onPress={() => console.log('Logining')}
-        />
+        <AppForm
+          initialValues={{
+            email: '',
+            password: '',
+            confirmPassword: '',
+            username: '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={async (values: any) => {
+            await handleEmailAndPasswordSignIn(values.email, values.password);
+          }}>
+          <AppFormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            name="email"
+            placeholder="Email"
+          />
+          <AppFormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder="username"
+            name="username"
+          />
+          <AppFormField
+            name="password"
+            placeholder="Password"
+            secureTextEntry
+          />
+          <AppFormField
+            name="confirmPassword"
+            placeholder="Confirm Password"
+            secureTextEntry
+          />
+          <SubmitButton title="Sign up" />
+        </AppForm>
         <View style={styles.signinOption}>
           <AppText>Already have an account?</AppText>
           <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
