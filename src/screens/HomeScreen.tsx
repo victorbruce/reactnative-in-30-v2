@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Image, StyleSheet, Switch, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Switch,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -11,13 +18,8 @@ import Separator from '../components/Separator';
 import theme from '../config/theme';
 
 function HomeScreen() {
+  const [todos, setTodos] = useState<any>();
   const [user, setUser] = useState<any>();
-  const [todos, setTodos] = useState([
-    {id: 1, todo: 'Build todo home screen'},
-    {id: 2, todo: 'Refactor code'},
-    {id: 3, todo: 'Build a todo component'},
-    {id: 4, todo: 'Post day 19 on my social media'},
-  ]);
 
   const getUser = async () => {
     try {
@@ -36,8 +38,38 @@ function HomeScreen() {
     }
   };
 
+  const getTodos = async () => {
+    try {
+      firestore()
+        .collection('todos')
+        .where('userId', '==', auth().currentUser?.uid)
+        .onSnapshot((querySnapshot) => {
+          let data: any = [];
+          querySnapshot.forEach((doc) => {
+            const todoData = doc.data();
+            todoData.id = doc.id;
+
+            data.push(todoData);
+          });
+          setTodos(data);
+        });
+    } catch (error) {}
+  };
+
+  const deleteTodo = async (id: string) => {
+    try {
+      await firestore().collection('todos').doc(id).delete();
+    } catch (error) {
+      return error;
+    }
+  };
+
   useEffect(() => {
     getUser();
+  }, []);
+
+  useEffect(() => {
+    getTodos();
   }, []);
 
   if (!user) {
@@ -56,15 +88,32 @@ function HomeScreen() {
       <View style={styles.header}>
         <AppText style={styles.welcomeMsg}>Hi!, {user.username}</AppText>
         <AppText style={styles.taskStatus}>
-          You have {todos.length} tasks available
+          You have {todos && todos.length} tasks available
         </AppText>
       </View>
       <View style={styles.body}>
         {todos ? (
+          todos &&
           todos.map((todo: any) => (
             <View style={styles.todoContainer} key={todo.id}>
-              <Switch />
-              <AppText numberOfLines={1}>{todo.todo}</AppText>
+              {console.log(todo)}
+              <View style={{flexDirection: 'row'}}>
+                <Switch />
+                <AppText>{todo.title}</AppText>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity onPress={() => console.log('deleting')}>
+                  <AntDesign name="edit" size={22} color="yellow" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteTodo(todo.id)}>
+                  <AntDesign
+                    name="delete"
+                    size={22}
+                    color="pink"
+                    style={{marginLeft: 16}}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           ))
         ) : (
@@ -132,6 +181,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.medium,
     width: '100%',
     marginBottom: theme.spacing.medium,
+    justifyContent: 'space-between',
   },
   loadingIndicator: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });

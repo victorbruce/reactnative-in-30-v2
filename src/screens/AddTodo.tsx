@@ -1,5 +1,7 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 import * as Yup from 'yup';
 
 import AppFormField from '../components/AppFormField';
@@ -14,13 +16,29 @@ const validationSchema = Yup.object().shape({
 });
 
 const AddTodo = () => {
+  const addTodo = async (todo: any) => {
+    try {
+      await firestore().collection('todos').add({
+        userId: auth().currentUser?.uid,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        lastModified: firestore.FieldValue.serverTimestamp(),
+        title: todo,
+        completed: false,
+      });
+      Alert.alert('Todo added');
+    } catch (error) {
+      return error;
+    }
+  };
   return (
     <Screen style={styles.container}>
       <View style={styles.todoForm}>
         <AppText style={styles.title}>Add Todo</AppText>
         <Formik
           initialValues={{todo: ''}}
-          onSubmit={(values: any) => console.log(values)}
+          onSubmit={(values: any) => {
+            addTodo(values.todo);
+          }}
           validationSchema={validationSchema}>
           <AppFormField
             autoCapitalize="none"
