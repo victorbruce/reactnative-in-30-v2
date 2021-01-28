@@ -17,19 +17,19 @@ import Separator from '../components/Separator';
 
 import theme from '../config/theme';
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
   const [todos, setTodos] = useState<any>();
   const [user, setUser] = useState<any>();
 
   const getUser = async () => {
     try {
-      const user = await firestore()
+      const doc = await firestore()
         .collection('users')
         .doc(auth().currentUser?.uid)
         .get();
 
-      if (user.exists) {
-        setUser(user.data());
+      if (doc.exists) {
+        setUser(doc.data());
       } else {
         console.log('user not found');
       }
@@ -40,7 +40,7 @@ function HomeScreen() {
 
   const getTodos = async () => {
     try {
-      firestore()
+      await firestore()
         .collection('todos')
         .where('userId', '==', auth().currentUser?.uid)
         .onSnapshot((querySnapshot) => {
@@ -53,7 +53,9 @@ function HomeScreen() {
           });
           setTodos(data);
         });
-    } catch (error) {}
+    } catch (error) {
+      console.error('error todos', error);
+    }
   };
 
   const deleteTodo = async (id: string) => {
@@ -70,6 +72,8 @@ function HomeScreen() {
 
   useEffect(() => {
     getTodos();
+
+    return;
   }, []);
 
   if (!user) {
@@ -96,13 +100,18 @@ function HomeScreen() {
           todos &&
           todos.map((todo: any) => (
             <View style={styles.todoContainer} key={todo.id}>
-              {console.log(todo)}
               <View style={{flexDirection: 'row'}}>
                 <Switch />
                 <AppText>{todo.title}</AppText>
               </View>
               <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity onPress={() => console.log('deleting')}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('EditTodo', {
+                      title: todo.title,
+                      id: todo.id,
+                    })
+                  }>
                   <AntDesign name="edit" size={22} color="yellow" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => deleteTodo(todo.id)}>
@@ -143,6 +152,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.black,
+  },
+  editTodo: {
+    width: 300,
+    backgroundColor: 'white',
   },
   title: {
     fontSize: 28,
