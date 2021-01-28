@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Image, StyleSheet, Switch, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Switch,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -10,24 +17,19 @@ import Separator from '../components/Separator';
 
 import theme from '../config/theme';
 
-function HomeScreen() {
+function HomeScreen({navigation}) {
+  const [todos, setTodos] = useState<any>();
   const [user, setUser] = useState<any>();
-  const [todos, setTodos] = useState([
-    {id: 1, todo: 'Build todo home screen'},
-    {id: 2, todo: 'Refactor code'},
-    {id: 3, todo: 'Build a todo component'},
-    {id: 4, todo: 'Post day 19 on my social media'},
-  ]);
 
   const getUser = async () => {
     try {
-      const user = await firestore()
+      const doc = await firestore()
         .collection('users')
         .doc(auth().currentUser?.uid)
         .get();
 
-      if (user.exists) {
-        setUser(user.data());
+      if (doc.exists) {
+        setUser(doc.data());
       } else {
         console.log('user not found');
       }
@@ -36,8 +38,42 @@ function HomeScreen() {
     }
   };
 
+  const getTodos = async () => {
+    try {
+      await firestore()
+        .collection('todos')
+        .where('userId', '==', auth().currentUser?.uid)
+        .onSnapshot((querySnapshot) => {
+          let data: any = [];
+          querySnapshot.forEach((doc) => {
+            const todoData = doc.data();
+            todoData.id = doc.id;
+
+            data.push(todoData);
+          });
+          setTodos(data);
+        });
+    } catch (error) {
+      console.error('error todos', error);
+    }
+  };
+
+  const deleteTodo = async (id: string) => {
+    try {
+      await firestore().collection('todos').doc(id).delete();
+    } catch (error) {
+      return error;
+    }
+  };
+
   useEffect(() => {
     getUser();
+  }, []);
+
+  useEffect(() => {
+    getTodos();
+
+    return;
   }, []);
 
   if (!user) {
@@ -56,15 +92,37 @@ function HomeScreen() {
       <View style={styles.header}>
         <AppText style={styles.welcomeMsg}>Hi!, {user.username}</AppText>
         <AppText style={styles.taskStatus}>
-          You have {todos.length} tasks available
+          You have {todos && todos.length} tasks available
         </AppText>
       </View>
       <View style={styles.body}>
         {todos ? (
+          todos &&
           todos.map((todo: any) => (
             <View style={styles.todoContainer} key={todo.id}>
-              <Switch />
-              <AppText numberOfLines={1}>{todo.todo}</AppText>
+              <View style={{flexDirection: 'row'}}>
+                <Switch />
+                <AppText>{todo.title}</AppText>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('EditTodo', {
+                      title: todo.title,
+                      id: todo.id,
+                    })
+                  }>
+                  <AntDesign name="edit" size={22} color="yellow" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => deleteTodo(todo.id)}>
+                  <AntDesign
+                    name="delete"
+                    size={22}
+                    color="pink"
+                    style={{marginLeft: 16}}
+                  />
+                </TouchableOpacity>
+              </View>
             </View>
           ))
         ) : (
@@ -94,6 +152,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.black,
+  },
+  editTodo: {
+    width: 300,
+    backgroundColor: 'white',
   },
   title: {
     fontSize: 28,
@@ -132,6 +194,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.medium,
     width: '100%',
     marginBottom: theme.spacing.medium,
+    justifyContent: 'space-between',
   },
   loadingIndicator: {flex: 1, justifyContent: 'center', alignItems: 'center'},
 });
