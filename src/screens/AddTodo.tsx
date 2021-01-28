@@ -27,7 +27,7 @@ const AddTodo = () => {
       });
       Alert.alert('Todo added');
     } catch (error) {
-      return error;
+      return console.error('error todos', error);
     }
   };
   return (
