@@ -2,10 +2,10 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
-import HomeScreen from '../screens/HomeScreen';
 import AddTodo from '../screens/AddTodo';
 import SettingsScreen from '../screens/SettingsScreen';
 import TodosScreen from '../screens/TodosScreen';
+import HomeNavigator from './HomeNavigator';
 
 import theme from '../config/theme';
 
@@ -36,7 +36,7 @@ const AppNavigator = () => {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}>
-      <TabBottom.Screen name="Home" component={HomeScreen} />
+      <TabBottom.Screen name="Home" component={HomeNavigator} />
       <TabBottom.Screen name="AddTodo" component={AddTodo} />
       <TabBottom.Screen name="Todos" component={TodosScreen} />
       <TabBottom.Screen name="Settings" component={SettingsScreen} />
