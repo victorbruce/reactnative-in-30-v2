@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import UserContextProvider from './contexts/user';
 
 import AuthNavigator from './navigation/AuthStack';
 import AppNavigator from './navigation/AppStack';
+import DefaultTheme from './navigation/DefaultTheme';
 
 function App() {
   const [initializing, setInitializing] = useState(true);
@@ -26,8 +28,14 @@ function App() {
   }
 
   return (
-    <NavigationContainer>
-      {user ? <AppNavigator /> : <AuthNavigator />}
+    <NavigationContainer theme={DefaultTheme}>
+      {user ? (
+        <UserContextProvider>
+          <AppNavigator />
+        </UserContextProvider>
+      ) : (
+        <AuthNavigator />
+      )}
     </NavigationContainer>
   );
 }
