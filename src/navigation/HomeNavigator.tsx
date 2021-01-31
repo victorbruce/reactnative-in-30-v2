@@ -3,8 +3,9 @@ import {createStackNavigator} from '@react-navigation/stack';
 
 import HomeScreen from '../screens/HomeScreen';
 import EditTodoScreen from '../screens/EditTodoScreen';
+import {HomeRoutes} from './Routes';
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<HomeRoutes>();
 
 const HomeNavigator = () => {
   return (

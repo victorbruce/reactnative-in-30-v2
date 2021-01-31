@@ -6,6 +6,7 @@ export type AuthRoutes = {
 
 export type HomeRoutes = {
   Home: undefined;
+  EditTodo: undefined;
 };
 
 export type AddTodoRoute = {
