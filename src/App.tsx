@@ -4,7 +4,7 @@ import auth from '@react-native-firebase/auth';
 import UserContextProvider from './contexts/user';
 
 import AuthNavigator from './navigation/AuthStack';
-import AppNavigator from './navigation/AppStack';
+import AppNavigator from './navigation/AppNavigator';
 import DefaultTheme from './navigation/DefaultTheme';
 
 function App() {
