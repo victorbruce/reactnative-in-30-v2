@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import auth from '@react-native-firebase/auth';
 import {StyleSheet, View, Image} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,10 +7,14 @@ import AppButton from '../components/AppButton';
 import AppText from '../components/AppText';
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
+import {profileIconLetter} from '../utils';
+import {UserContext} from '../contexts/user';
 
 import theme from '../config/theme';
 
 const SettingsScreen = () => {
+  const {user} = useContext(UserContext);
+
   const handleSignOut = async () => {
     try {
       await auth().signOut();
@@ -21,13 +25,20 @@ const SettingsScreen = () => {
   return (
     <Screen style={styles.container}>
       <View style={styles.titleBar}>
-        <Image
+        {/* <Image
           source={{
             uri:
               'https://lh4.googleusercontent.com/-R2RT0PlPq7s/AAAAAAAAAAI/AAAAAAAAAAA/AMZuucnxNmDOdHFrYBbg7ZzuLvOrZPqjSA/s96-c/photo.jpg',
           }}
           style={styles.avatar}
-        />
+        /> */}
+        <View style={styles.profileIcon}>
+          {user && (
+            <AppText style={styles.profileText}>
+              {profileIconLetter(user.username)}
+            </AppText>
+          )}
+        </View>
         <View style={styles.userDetails}>
           <AppText style={styles.name}>John Doe</AppText>
           <AppText style={styles.email}>johndoe@gmail.com</AppText>
@@ -85,7 +96,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   settingsTitle: {
-    fontSize: theme.textVariants.medium,
+    fontSize: 18,
     marginBottom: theme.spacing.medium,
   },
   settingsBackground: {
@@ -103,6 +114,19 @@ const styles = StyleSheet.create({
   },
   userDetails: {
     marginLeft: theme.spacing.small,
+  },
+  profileIcon: {
+    width: 44,
+    height: 44,
+    backgroundColor: theme.colors.yellow,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileText: {
+    color: theme.colors.black,
+    fontSize: theme.textVariants.small,
+    fontWeight: 'bold',
   },
 });
 

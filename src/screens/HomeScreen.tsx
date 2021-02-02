@@ -1,48 +1,33 @@
-import React, {useEffect, useState} from 'react';
-import {
-  View,
-  Image,
-  StyleSheet,
-  Switch,
-  ActivityIndicator,
-  TouchableOpacity,
-} from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import React, {useEffect, useState, useContext} from 'react';
+import {View, StyleSheet, Image} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {UserContext} from '../contexts/user';
 
 import AppText from '../components/AppText';
+import {HomeRoutes} from '../navigation/Routes';
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
+import {StackNavigatorProps} from '../navigation/NavInterfaces';
+import LoadingIndicator from '../components/LoadingIndicator';
+import TodoItem from '../components/TodoItem';
+import {profileIconLetter} from '../utils';
 
 import theme from '../config/theme';
 
-function HomeScreen({navigation}) {
+const HomeScreen = ({navigation}: StackNavigatorProps<HomeRoutes, 'Home'>) => {
   const [todos, setTodos] = useState<any>();
-  const [user, setUser] = useState<any>();
-
-  const getUser = async () => {
-    try {
-      const doc = await firestore()
-        .collection('users')
-        .doc(auth().currentUser?.uid)
-        .get();
-
-      if (doc.exists) {
-        setUser(doc.data());
-      } else {
-        console.log('user not found');
-      }
-    } catch (error) {
-      return error;
-    }
-  };
+  const [completedTodos, setCompletedTodos] = useState<any>();
+  const {user} = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getTodos = async () => {
     try {
+      setLoading(true);
       await firestore()
         .collection('todos')
         .where('userId', '==', auth().currentUser?.uid)
+        .where('completed', '==', false)
         .onSnapshot((querySnapshot) => {
           let data: any = [];
           querySnapshot.forEach((doc) => {
@@ -53,8 +38,32 @@ function HomeScreen({navigation}) {
           });
           setTodos(data);
         });
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error('error todos', error);
+    }
+  };
+
+  const getCompletedTodos = async () => {
+    try {
+      setLoading(true);
+      await firestore()
+        .collection('todos')
+        .where('completed', '==', true)
+        .onSnapshot((querySnapshot) => {
+          let data: any = [];
+          querySnapshot.forEach((doc) => {
+            const completedData = doc.data();
+            completedData.id = doc.id;
+            data.push(completedData);
+          });
+          setCompletedTodos(data);
+        });
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log('error completed todos', error);
     }
   };
 
@@ -66,137 +75,158 @@ function HomeScreen({navigation}) {
     }
   };
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  const toggleCompleted = (todo: any, id: string) => {
+    firestore().collection('todos').doc(id).update({
+      completed: !todo.completed,
+    });
+  };
 
   useEffect(() => {
     getTodos();
 
-    return;
+    return () => setTodos([]);
   }, []);
 
-  if (!user) {
-    return (
-      <ActivityIndicator
-        animating={true}
-        size={24}
-        color="black"
-        style={styles.loadingIndicator}
-      />
-    );
+  useEffect(() => {
+    getCompletedTodos();
+
+    return () => setCompletedTodos([]);
+  }, []);
+
+  if (loading || !user) {
+    return <LoadingIndicator color="white" size={32} />;
   }
 
   return (
     <Screen style={styles.container}>
-      <View style={styles.header}>
-        <AppText style={styles.welcomeMsg}>Hi!, {user.username}</AppText>
-        <AppText style={styles.taskStatus}>
-          You have {todos && todos.length} tasks available
-        </AppText>
+      <View style={styles.titleBar}>
+        <View>
+          <AppText style={styles.greeting}>Hello,</AppText>
+          <AppText style={styles.username}>{user && user.username}</AppText>
+        </View>
+        <View style={styles.profileIcon}>
+          {user && (
+            <AppText style={styles.profileText}>
+              {profileIconLetter(user.username)}
+            </AppText>
+          )}
+        </View>
       </View>
+      <Separator marginBottom={32} />
       <View style={styles.body}>
-        {todos ? (
-          todos &&
-          todos.map((todo: any) => (
-            <View style={styles.todoContainer} key={todo.id}>
-              <View style={{flexDirection: 'row'}}>
-                <Switch />
-                <AppText>{todo.title}</AppText>
-              </View>
-              <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('EditTodo', {
-                      title: todo.title,
-                      id: todo.id,
-                    })
-                  }>
-                  <AntDesign name="edit" size={22} color="yellow" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => deleteTodo(todo.id)}>
-                  <AntDesign
-                    name="delete"
-                    size={22}
-                    color="pink"
-                    style={{marginLeft: 16}}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))
-        ) : (
-          <>
-            <Image
-              source={require('../assets/empty-box.png')}
-              resizeMode="contain"
-            />
-            <Separator marginBottom={16} />
-            <AppText>No Todos Available</AppText>
-            <View style={styles.addTask}>
-              <AntDesign
-                name="plussquareo"
-                size={24}
-                color={theme.colors.yellow}
+        <View>
+          {todos && todos.length ? (
+            <AppText style={styles.subtitle}>Tasks</AppText>
+          ) : null}
+          {todos && todos.length ? (
+            todos.map((todo: any) => (
+              <TodoItem
+                key={todo.id}
+                title={todo.title}
+                isComplete={todo.completed}
+                onPress={() => toggleCompleted(todo, todo.id)}
               />
-              <AppText style={styles.addTodo}>Add Todo</AppText>
+            ))
+          ) : (
+            <View style={styles.noTodos}>
+              <Image
+                source={require('../assets/empty-box.png')}
+                resizeMode="contain"
+                style={styles.noTodoImage}
+              />
+              <AppText style={styles.noTodoText}>No todos</AppText>
+              <Separator marginBottom={24} />
             </View>
-          </>
-        )}
+          )}
+        </View>
+        <Separator marginBottom={32} />
+
+        <View>
+          {completedTodos && completedTodos.length ? (
+            <AppText>Completed</AppText>
+          ) : null}
+          {completedTodos.length
+            ? completedTodos.map((completedTodo: any) => (
+                <TodoItem
+                  key={completedTodo.id}
+                  title={completedTodo.title}
+                  isComplete={completedTodo.completed}
+                  onPress={() =>
+                    toggleCompleted(completedTodo, completedTodo.id)
+                  }
+                />
+              ))
+            : null}
+        </View>
       </View>
     </Screen>
   );
-}
+};
 
 const styles = StyleSheet.create({
+  body: {
+    paddingHorizontal: theme.spacing.medium,
+  },
   container: {
     flex: 1,
-    backgroundColor: theme.colors.black,
   },
-  editTodo: {
-    width: 300,
-    backgroundColor: 'white',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-  },
-  header: {
-    padding: theme.spacing.large,
-  },
-  welcomeMsg: {
-    fontSize: theme.textVariants.medium,
-    color: theme.colors.white,
-  },
-  taskStatus: {
-    marginTop: theme.spacing.small,
-  },
-  body: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: theme.spacing.large,
-  },
-  addTask: {
+  titleBar: {
+    paddingHorizontal: theme.spacing.medium,
+    paddingVertical: theme.spacing.medium,
     flexDirection: 'row',
-    marginTop: theme.spacing.small,
-  },
-  addTodo: {
-    color: theme.colors.yellow,
-    marginLeft: theme.spacing.small,
-  },
-  todoContainer: {
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.yellow,
-    borderRadius: theme.borderRadii.medium,
-    flexDirection: 'row',
-    padding: theme.spacing.medium,
-    width: '100%',
-    marginBottom: theme.spacing.medium,
     justifyContent: 'space-between',
   },
-  loadingIndicator: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  greeting: {
+    fontSize: theme.textVariants.medium,
+    marginBottom: theme.spacing.small,
+    color: theme.colors.grey,
+    fontWeight: '600',
+  },
+  username: {
+    fontSize: theme.spacing.large,
+  },
+  profileIcon: {
+    width: 44,
+    height: 44,
+    backgroundColor: theme.colors.yellow,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  profileText: {
+    color: theme.colors.black,
+    fontSize: theme.textVariants.small,
+    fontWeight: 'bold',
+  },
+  todoItem: {
+    backgroundColor: '#121212',
+    height: 50,
+    borderRadius: 15,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: theme.spacing.medium,
+    marginBottom: theme.spacing.medium,
+  },
+  todo: {
+    marginLeft: theme.spacing.medium,
+  },
+  subtitle: {
+    marginBottom: theme.spacing.medium,
+  },
+  noTodos: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noTodoImage: {
+    width: 150,
+    height: 150,
+  },
+  noTodoText: {
+    marginTop: theme.spacing.small,
+    fontWeight: 'bold',
+  },
 });
 
 export default HomeScreen;

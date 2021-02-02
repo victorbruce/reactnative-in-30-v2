@@ -4,7 +4,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import AddTodo from '../screens/AddTodo';
 import SettingsScreen from '../screens/SettingsScreen';
-import TodosScreen from '../screens/TodosScreen';
 import HomeNavigator from './HomeNavigator';
 
 import theme from '../config/theme';
@@ -29,16 +28,22 @@ const AppNavigator = () => {
             iconName = focused ? 'add-sharp' : 'add-outline';
           } else if (route.name === 'Settings') {
             iconName = focused ? 'settings' : 'settings-outline';
-          } else if (route.name === 'Todos') {
-            iconName = focused ? 'trending-up' : 'trending-up-outline';
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
       })}>
       <TabBottom.Screen name="Home" component={HomeNavigator} />
-      <TabBottom.Screen name="AddTodo" component={AddTodo} />
-      <TabBottom.Screen name="Todos" component={TodosScreen} />
+      <TabBottom.Screen
+        name="AddTodo"
+        component={AddTodo}
+        listeners={({navigation}) => ({
+          tabPress: (event) => {
+            event.preventDefault();
+            navigation.navigate('AddTodo');
+          },
+        })}
+      />
       <TabBottom.Screen name="Settings" component={SettingsScreen} />
     </TabBottom.Navigator>
   );
