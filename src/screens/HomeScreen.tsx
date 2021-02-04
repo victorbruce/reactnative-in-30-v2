@@ -99,6 +99,8 @@ const HomeScreen = () => {
     return <LoadingIndicator color="white" size={32} />;
   }
 
+  console.log(completedTodos);
+
   return (
     <Screen style={styles.container}>
       <ScrollView>
@@ -118,10 +120,10 @@ const HomeScreen = () => {
         <Separator marginBottom={32} />
         <View style={styles.body}>
           <View>
-            {todos && todos.length ? (
+            {todos && todos.length > 0 ? (
               <AppText style={styles.subtitle}>Tasks</AppText>
             ) : null}
-            {todos && todos.length ? (
+            {todos && todos.length > 0 ? (
               todos.map((todo: any) => (
                 <Swipeable
                   key={todo.id}
@@ -153,7 +155,7 @@ const HomeScreen = () => {
             {completedTodos && completedTodos.length > 0 ? (
               <AppText>Completed</AppText>
             ) : null}
-            {completedTodos.length > 0
+            {completedTodos && completedTodos.length > 0
               ? completedTodos.map((completedTodo: any) => (
                   <Swipeable
                     key={completedTodo.id}
