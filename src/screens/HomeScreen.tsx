@@ -1,24 +1,24 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, ScrollView, Image} from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {UserContext} from '../contexts/user';
 
 import AppText from '../components/AppText';
-import {HomeRoutes} from '../navigation/Routes';
+import DeleteTodoItem from '../components/DeleteTodoItem';
 import Screen from '../components/Screen';
 import Separator from '../components/Separator';
-import {StackNavigatorProps} from '../navigation/NavInterfaces';
 import LoadingIndicator from '../components/LoadingIndicator';
 import TodoItem from '../components/TodoItem';
 import {profileIconLetter} from '../utils';
 
 import theme from '../config/theme';
 
-const HomeScreen = ({navigation}: StackNavigatorProps<HomeRoutes, 'Home'>) => {
+const HomeScreen = () => {
   const [todos, setTodos] = useState<any>();
   const [completedTodos, setCompletedTodos] = useState<any>();
-  const {user} = useContext(UserContext);
+  const {user}: any = useContext(UserContext);
   const [loading, setLoading] = useState<boolean>(false);
 
   const getTodos = async () => {
@@ -84,13 +84,15 @@ const HomeScreen = ({navigation}: StackNavigatorProps<HomeRoutes, 'Home'>) => {
   useEffect(() => {
     getTodos();
 
-    return () => setTodos([]);
+    // return () => setTodos([]);
+    return;
   }, []);
 
   useEffect(() => {
     getCompletedTodos();
 
-    return () => setCompletedTodos([]);
+    // return () => setCompletedTodos([]);
+    return;
   }, []);
 
   if (loading || !user) {
@@ -99,66 +101,80 @@ const HomeScreen = ({navigation}: StackNavigatorProps<HomeRoutes, 'Home'>) => {
 
   return (
     <Screen style={styles.container}>
-      <View style={styles.titleBar}>
-        <View>
-          <AppText style={styles.greeting}>Hello,</AppText>
-          <AppText style={styles.username}>{user && user.username}</AppText>
-        </View>
-        <View style={styles.profileIcon}>
-          {user && (
-            <AppText style={styles.profileText}>
-              {profileIconLetter(user.username)}
-            </AppText>
-          )}
-        </View>
-      </View>
-      <Separator marginBottom={32} />
-      <View style={styles.body}>
-        <View>
-          {todos && todos.length ? (
-            <AppText style={styles.subtitle}>Tasks</AppText>
-          ) : null}
-          {todos && todos.length ? (
-            todos.map((todo: any) => (
-              <TodoItem
-                key={todo.id}
-                title={todo.title}
-                isComplete={todo.completed}
-                onPress={() => toggleCompleted(todo, todo.id)}
-              />
-            ))
-          ) : (
-            <View style={styles.noTodos}>
-              <Image
-                source={require('../assets/empty-box.png')}
-                resizeMode="contain"
-                style={styles.noTodoImage}
-              />
-              <AppText style={styles.noTodoText}>No todos</AppText>
-              <Separator marginBottom={24} />
-            </View>
-          )}
+      <ScrollView>
+        <View style={styles.titleBar}>
+          <View>
+            <AppText style={styles.greeting}>Hello,</AppText>
+            <AppText style={styles.username}>{user && user.username}</AppText>
+          </View>
+          <View style={styles.profileIcon}>
+            {user && (
+              <AppText style={styles.profileText}>
+                {profileIconLetter(user.username)}
+              </AppText>
+            )}
+          </View>
         </View>
         <Separator marginBottom={32} />
-
-        <View>
-          {completedTodos && completedTodos.length ? (
-            <AppText>Completed</AppText>
-          ) : null}
-          {completedTodos.length
-            ? completedTodos.map((completedTodo: any) => (
-                <TodoItem
-                  key={completedTodo.id}
-                  title={completedTodo.title}
-                  isComplete={completedTodo.completed}
-                  onPress={() =>
-                    toggleCompleted(completedTodo, completedTodo.id)
-                  }
-                />
+        <View style={styles.body}>
+          <View>
+            {todos && todos.length ? (
+              <AppText style={styles.subtitle}>Tasks</AppText>
+            ) : null}
+            {todos && todos.length ? (
+              todos.map((todo: any) => (
+                <Swipeable
+                  key={todo.id}
+                  renderRightActions={() => (
+                    <DeleteTodoItem onPress={() => deleteTodo(todo.id)} />
+                  )}>
+                  <TodoItem
+                    title={todo.title}
+                    isComplete={todo.completed}
+                    onPress={() => toggleCompleted(todo, todo.id)}
+                  />
+                </Swipeable>
               ))
-            : null}
+            ) : (
+              <View style={styles.noTodos}>
+                <Image
+                  source={require('../assets/empty-box.png')}
+                  resizeMode="contain"
+                  style={styles.noTodoImage}
+                />
+                <AppText style={styles.noTodoText}>No todos</AppText>
+                <Separator marginBottom={24} />
+              </View>
+            )}
+          </View>
+          <Separator marginBottom={32} />
+
+          <View>
+            {completedTodos && completedTodos.length > 0 ? (
+              <AppText>Completed</AppText>
+            ) : null}
+            {completedTodos.length > 0
+              ? completedTodos.map((completedTodo: any) => (
+                  <Swipeable
+                    key={completedTodo.id}
+                    renderRightActions={() => (
+                      <DeleteTodoItem
+                        onPress={() => deleteTodo(completedTodo.id)}
+                      />
+                    )}>
+                    <TodoItem
+                      title={completedTodo.title}
+                      isComplete={completedTodo.completed}
+                      onPress={() =>
+                        toggleCompleted(completedTodo, completedTodo.id)
+                      }
+                    />
+                  </Swipeable>
+                ))
+              : null}
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </Screen>
   );
 };
