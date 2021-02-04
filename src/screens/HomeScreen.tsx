@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useRef, useEffect, useState, useContext} from 'react';
 import {View, StyleSheet, ScrollView, Image} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import auth from '@react-native-firebase/auth';
@@ -16,6 +16,7 @@ import {profileIconLetter} from '../utils';
 import theme from '../config/theme';
 
 const HomeScreen = () => {
+  const isCancelled = useRef(false);
   const [todos, setTodos] = useState<any>();
   const [completedTodos, setCompletedTodos] = useState<any>();
   const {user}: any = useContext(UserContext);
@@ -84,15 +85,17 @@ const HomeScreen = () => {
   useEffect(() => {
     getTodos();
 
-    // return () => setTodos([]);
-    return;
+    return () => {
+      isCancelled.current = true;
+    };
   }, []);
 
   useEffect(() => {
     getCompletedTodos();
 
-    // return () => setCompletedTodos([]);
-    return;
+    return () => {
+      isCancelled.current = true;
+    };
   }, []);
 
   if (loading || !user) {
