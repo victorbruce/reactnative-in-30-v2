@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "670583968577-4qk953gsjnk7tp581bdicq3jlqhreif6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rninthirtydays",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "670583968577-cs448lr9f1e1qto92gvr7lhig5peb0hf.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "670583968577-cs448lr9f1e1qto92gvr7lhig5peb0hf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "670583968577-5fnnqhd36cafff2mlassrt13tfbts61v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rninthirtydays"
+              }
             }
           ]
         }
