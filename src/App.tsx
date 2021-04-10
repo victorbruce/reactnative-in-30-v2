@@ -1,43 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import auth from '@react-native-firebase/auth';
-import UserContextProvider from './contexts/user';
-
-import AuthNavigator from './navigation/AuthStack';
-import AppNavigator from './navigation/AppNavigator';
-import DefaultTheme from './navigation/DefaultTheme';
+import React from 'react';
+import {StyleSheet, View, Text} from 'react-native';
 
 function App() {
-  const [initializing, setInitializing] = useState(true);
-  const [user, setUser] = useState();
-
-  function onAuthStateChanged(fbuser: any) {
-    setUser(fbuser);
-    if (initializing) {
-      setInitializing(false);
-    }
-  }
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
-
-  if (initializing) {
-    return null;
-  }
-
   return (
-    <NavigationContainer theme={DefaultTheme}>
-      {user ? (
-        <UserContextProvider>
-          <AppNavigator />
-        </UserContextProvider>
-      ) : (
-        <AuthNavigator />
-      )}
-    </NavigationContainer>
+    <View style={styles.container}>
+      <Text>Hello World</Text>
+    </View>
   );
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
